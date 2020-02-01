@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # number sequence puzzle generator
 # Copyright (C) 2020 by Arjen Lentz
 # Licensed under AGPLv3
@@ -64,9 +65,11 @@ else:
         sequence.append(do_operation(sequence[i], operation, change_value1, change_value2))
 
 # debug output to stderr (redirect with 2>>pathname)
+# bit crude as change_value2 (and even change_value1) not always used
 print(operation, change_value1, change_value2, file=sys.stderr)
 # regular output to stdout (redirect with >>pathname)
-print(sequence)
-
+for x in sequence:
+    print(x, end=', ')
+print('...')
 
 # eof
