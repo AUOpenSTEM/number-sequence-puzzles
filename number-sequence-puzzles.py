@@ -39,7 +39,7 @@ class sequence_base():
             else:
                 raise Exception('Unknown random valref')
 
-            if (args.allow_negative_changes and multiply):
+            if (args.allow_negative_multiplication and multiply):
                 lower = -upper
             elif (multiply):
                 lower = 2
@@ -311,7 +311,7 @@ def check_sequence(op):
         if (x < 0 and args.allow_negative_sequence is False):
             return False
         # do we allow values this large in our sequence?
-        if (abs(args.sequence_limit) and x > args.sequence_limit):
+        if (args.sequence_limit and abs(x) > args.sequence_limit):
             return False
         # check if more than 2 sequence values are the same
         # we can have all the same or end up at 0 early on
@@ -337,19 +337,22 @@ parser.add_argument('--sequence-limit', type=int, default=0, help="Set upper lim
 parser.add_argument('--allow-twostep', action='store_true', help='Allow two-step operations')
 parser.add_argument('--allow-previous', action='store_true', help='Allow operations involving previous value in sequence')
 parser.add_argument('--allow-adaptive', action='store_true', help='Allow change value to be subject to a change constant')
-parser.add_argument('--allow-negative-changes', action='store_true', help='Allow change values to be negative')
+parser.add_argument('--allow-negative-multiplication', action='store_true', help='Allow multiplication change values to be negative (also enables allow-negative-sequence)')
 parser.add_argument('--allow-negative-sequence', action='store_true', help='Allow sequence values to be negative')
+parser.add_argument('--allow-complex', action='store_true', help='Enable all allow options for maximum complexity')
 parser.add_argument('--debug', action='store_true', help='Show next value in sequence, and pattern rule')
 
 
 args = parser.parse_args()
-
-
+if (args.allow_complex):
+    args.allow_twostep = args.allow_previous = args.allow_adaptive = args.allow_negative_multiplication = args.allow_negative_sequence = True
+if (args.allow_negative_multiplication):
+    args.allow_negative_sequence = True
 
 def check_new_operation(capability_operations, method):
-    if ((method.uses_twostep() and args.allow_twostep) or
-        (method.uses_previous() and args.allow_previous) or
-        (method.uses_adaptive() and args.allow_adaptive)):
+    if ((not method.uses_twostep(method) or args.allow_twostep) and
+        (not method.uses_previous(method) or args.allow_previous) and
+        (not method.uses_adaptive(method) or args.allow_adaptive)):
         capability_operations.append(method.name(method))
 
 
@@ -367,20 +370,27 @@ check_new_operation(capability_operations, sequence_multiply_add)
 check_new_operation(capability_operations, sequence_multiply_subtract)
 check_new_operation(capability_operations, sequence_multiplyself)
 
+if (args.debug):
+    print("Options:", args)
+    print("Configured for the following operations:", capability_operations)
+
 
 # initialise pseudo-random generator
 random.seed()
 
 for n in range(args.count):
-    # pick operation
-    operation = random.choice(capability_operations)
-
     while True:
+        # pick operation
+        # we pick a new operation on looping as otherwise we could get stuck
+        # e.g. with a low upper sequence limit and self-multiplication
+        operation = random.choice(capability_operations)
+
         op = select_operation(operation)
         op.run()
 
         if check_sequence(op):
             break
+        # loop to try again
 
     for x in op.sequence:
         print(x, end=', ')
