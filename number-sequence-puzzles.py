@@ -15,8 +15,9 @@ def do_operation (current_value, operation, change_value1, change_value2):
         'add': current_value + change_value1,
         'subtract': current_value - change_value1,
         'multiply': current_value * change_value1,
-        'addself': current_value * 2,
-        'addself-add': (current_value * 2) + change_value1,
+        'addself': current_value + current_value,
+        'addself-xadd': current_value + current_value + change_value1,
+        'add-add': current_value + change_value1,
         'add-multiply': (current_value + change_value1) * change_value2,
         'subtract-multiply': (current_value - change_value1) * change_value2,
         'multiply-add': (current_value * change_value1) + change_value2,
@@ -45,20 +46,21 @@ args = parser.parse_args()
 
 
 # basic
-capability_operations = [ 'add',
-                            'subtract',
-                            'multiply',
-                            'add-previous'
-]
+capability_operations = [ 'add',            # next = current + change1
+                            'subtract',     # next = current - change1
+                            'multiply',     # next = current * change1
+                            'add-previous'  # next = current + previous
+                        ]
 
 if (args.level == 'two-step'):
-   capability_operations.append('addself')
-   capability_operations.append('addself-add')
-   capability_operations.append('add-multiply')
-   capability_operations.append('subtract-multiply')
-   capability_operations.append('multiply-add')
-   capability_operations.append('multiply-subtract')
-   capability_operations.append('multiply-self')
+   capability_operations.append('addself')              # next = current + current
+   capability_operations.append('addself-add')          # next = current + current + change1
+   capability_operations.append('add-xadd')             # next = current + change1, change1 += change2
+   capability_operations.append('add-multiply')         # next = (current + change1) * change2
+   capability_operations.append('subtract-multiply')    # next = (current - change1) * change2
+   capability_operations.append('multiply-add')         # next = (current * change1) + change2
+   capability_operations.append('multiply-subtract')    # next = (current * change1) - change2
+   capability_operations.append('multiply-self')        # next * current * current
 
 
 # initialise pseudo-random generator
@@ -79,6 +81,8 @@ for n in range(args.count):
     else:
         for i in range (0, 3):
             sequence.append(do_operation(sequence[i], operation, change_value1, change_value2))
+            if (operation == 'add-xadd'):
+                change_value2 += change_value2
 
     # bit crude as change_value2 (and even change_value1) not always used
     if (args.debug == True):
