@@ -1,12 +1,14 @@
 # Number Puzzle Generator
 
 You know those puzzles that present you with some numbers, and then ask you
-what the next number in the sequence should be? Like 1, 2, 3, ...
+what the next number in the sequence should be? Like 1, 4, 7, ...
+
 Well, this little tool can create a variety of such puzzle sequences, with
-different rules of complexity.
+different rules of complexity including multi-step operations.
 
 
 # About the code
+
 To be clear, I am not an experienced Python Programmer.
 It's written in Python because I happened to be maintaining some Python code
 at the time. So some of this may look sane, other bits may look atrocious :)

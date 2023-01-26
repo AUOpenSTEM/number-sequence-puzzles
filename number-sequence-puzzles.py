@@ -1,10 +1,26 @@
 #!/usr/bin/env python3
-# number sequence puzzle generator
-# Copyright (C) 2020 by Arjen Lentz
-# Licensed under AGPLv3
+#    number sequence puzzle generator
+#    Copyright (C) 2020 by Arjen Lentz
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as published
+#    by the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+#        https://www.gnu.org/licenses/agpl.txt
+
 
 # 2020-02-01 initial stuffs
 # 2020-02-02 make it more classy
+# 2023-01-26 published because why not
 
 import sys
 import random
@@ -400,4 +416,5 @@ for n in range(args.count):
         op.debug()
 
     print()
+
 # eof
